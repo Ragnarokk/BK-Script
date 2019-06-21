@@ -39,3 +39,14 @@ python3 -m pip install -U selenium
 
 Télécharger geckodriver ici : https://github.com/mozilla/geckodriver/releases
 et le mettre dans le dossier où se trouve python3.exe
+
+## Lancement
+```
+python3 bk.py
+```
+
+ou tout simplement
+
+```
+./bk.py
+```
