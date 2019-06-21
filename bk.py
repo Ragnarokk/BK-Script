@@ -134,11 +134,13 @@ select = Select(browser.find_element_by_id("R069000"))
 select.select_by_value('9')
 select = Select(browser.find_element_by_id("R070000"))
 select.select_by_value('9')
-next_page(browser)
-
 select = Select(browser.find_element_by_id("R074000"))
 select.select_by_value('9')
 next_page(browser)
+
+#select = Select(browser.find_element_by_id("R074000"))
+#select.select_by_value('9')
+#next_page(browser)
 
 elem = browser.find_element_by_id('S076000')
 elem.send_keys('69000')
@@ -147,4 +149,4 @@ next_page(browser)
 elem = browser.find_element_by_class_name('ValCode')
 print(elem.text)
 
-browser.quit()
+#browser.quit()
