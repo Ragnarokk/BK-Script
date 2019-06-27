@@ -8,6 +8,7 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException
 import datetime
+import argparse
 
 def select_radio(browser: webdriver, id: int):
     elem = browser.find_element_by_xpath("(//*[@class='radioSimpleInput'])[{}]".format(id))
@@ -28,6 +29,10 @@ def next_page(browser: webdriver):
     elem = browser.find_element_by_id('NextButton')  # Find the button
     elem.click()
 
+# Gestion et parsing des arguments
+parser = argparse.ArgumentParser()
+parser.add_argument('-q', '--quit', help='quit when the program is finished', action="store_true")
+args = parser.parse_args()
 
 browser = webdriver.Firefox()
 browser.get("https://www.bk-feedback-uk.com")
@@ -149,4 +154,5 @@ next_page(browser)
 elem = browser.find_element_by_class_name('ValCode')
 print(elem.text)
 
-#browser.quit()
+if args.quit:
+    browser.quit()
