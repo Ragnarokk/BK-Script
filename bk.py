@@ -153,6 +153,9 @@ def completion_process(n: int):
         elem = browser.find_element_by_class_name('ValCode')
         print(elem.text)
 
+        if args.quit:
+            browser.quit()
+
 # Gestion et parsing des arguments
 parser = argparse.ArgumentParser()
 parser.add_argument('-q', '--quit', help='Quit when the program is finished.', action="store_true")
@@ -160,6 +163,3 @@ parser.add_argument('-N', '--Niterations', help='The number of iterations of the
 args = parser.parse_args()
 args.Niterations = args.Niterations if args.Niterations is not None else 1
 
-
-if args.quit:
-    browser.quit()
