@@ -50,3 +50,14 @@ ou tout simplement
 ```
 ./bk.py
 ```
+## Utilisation
+usage: bk.py [-h] [-q] [-N NITERATIONS] [-Np NPARAITERATIONS]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -q, --quit            Quit when the program is finished.
+  -N NITERATIONS, --Niterations NITERATIONS
+                        The number of iterations of the script in one browser.
+  -Np NPARAITERATIONS, --NParaIterations NPARAITERATIONS
+                        The number of iterations in parallel aka the number of
+                        browsers in parallel.
