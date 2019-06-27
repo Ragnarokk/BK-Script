@@ -53,11 +53,12 @@ ou tout simplement
 ## Utilisation
 usage: bk.py [-h] [-q] [-N NITERATIONS] [-Np NPARAITERATIONS]
 
-optional arguments:
-  -h, --help            show this help message and exit
-  -q, --quit            Quit when the program is finished.
-  -N NITERATIONS, --Niterations NITERATIONS
-                        The number of iterations of the script in one browser.
-  -Np NPARAITERATIONS, --NParaIterations NPARAITERATIONS
-                        The number of iterations in parallel aka the number of
-                        browsers in parallel.
+optional arguments:  
+ &nbsp;&nbsp; -h, --help          
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   show this help message and exit  
+ &nbsp;&nbsp; -q, --quit            
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   Quit when the program is finished.  
+ &nbsp;&nbsp; -N NITERATIONS, --Niterations NITERATIONS  
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The number of iterations of the script in one browser.  
+ &nbsp;&nbsp; -Np NPARAITERATIONS, --NParaIterations NPARAITERATIONS  
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The number of iterations in parallel aka the number of browsers in parallel.  
