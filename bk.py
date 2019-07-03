@@ -10,6 +10,7 @@ from selenium.common.exceptions import NoSuchElementException
 import datetime
 import argparse
 import threading
+import os
 
 def select_radio(browser: webdriver, id: int):
     elem = browser.find_element_by_xpath("(//*[@class='radioSimpleInput'])[{}]".format(id))
@@ -111,7 +112,7 @@ def completion_process(n: int, quit: bool):
         next_page(browser)
     
         #select_checkbox(browser, 18)
-        elem = browser.find_element_by_id("FNSR000090").find_element_by_class_name("checkboxSimpleInput")
+        elem = browser.find_element_by_id("FNSR000091").find_element_by_class_name("checkboxSimpleInput")
         elem.click()
         next_page(browser)
     
@@ -156,24 +157,32 @@ def completion_process(n: int, quit: bool):
         elem = browser.find_element_by_class_name('ValCode')
         print(elem.text)
 
-    if args.quit:
+    if quit:
         browser.quit()
 
-# Gestion et parsing des arguments
-parser = argparse.ArgumentParser()
-parser.add_argument('-q', '--quit', help='Quit when the program is finished.', action="store_true")
-parser.add_argument('-N', '--Niterations', help='The number of iterations of the script in one browser.', type=int)
-parser.add_argument('-Np', '--NParaIterations', help='The number of iterations in parallel aka the number of browsers in parallel.', type=int)
-args = parser.parse_args()
+def main():
+    # We add the browser drivers to the PATH
+    drivers_path = os.path.join(os.getcwd(), "drivers")
+    os.environ["PATH"] += os.pathsep + drivers_path
 
-N = args.Niterations if args.Niterations is not None else 1
-Np = args.NParaIterations if args.NParaIterations is not None else 1
+    # Gestion et parsing des arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-q', '--quit', help='Quit when the program is finished.', action="store_true")
+    parser.add_argument('-N', '--Niterations', help='The number of iterations of the script in one browser.', type=int)
+    parser.add_argument('-Np', '--NParaIterations', help='The number of iterations in parallel aka the number of browsers in parallel.', type=int)
+    args = parser.parse_args()
 
-threads = []
-for i in range(Np):
-    thread = threading.Thread(target=completion_process, args=(N, args.quit))
-    threads.append(thread)
-    thread.start()
+    N = args.Niterations if args.Niterations is not None else 1
+    Np = args.NParaIterations if args.NParaIterations is not None else 1
 
-for j in range(Np):
-    threads[j].join()
+    threads = []
+    for i in range(Np):
+        thread = threading.Thread(target=completion_process, args=(N, args.quit))
+        threads.append(thread)
+        thread.start()
+
+    for j in range(Np):
+        threads[j].join()
+
+if __name__ == "__main__":
+    main()
