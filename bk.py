@@ -111,7 +111,7 @@ def completion_process(n: int, quit: bool):
         next_page(browser)
     
         #select_checkbox(browser, 18)
-        elem = browser.find_element_by_id("FNSR000090").find_element_by_class_name("checkboxSimpleInput")
+        elem = browser.find_element_by_id("FNSR000091").find_element_by_class_name("checkboxSimpleInput")
         elem.click()
         next_page(browser)
     
