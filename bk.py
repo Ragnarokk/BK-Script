@@ -12,9 +12,6 @@ import argparse
 import threading
 import os
 
-drivers = {('f', "firefox"): webdriver.Firefox,
-           ('c', "chrome"): webdriver.Chrome}
-
 def select_radio(browser: webdriver, id: int):
     elem = browser.find_element_by_xpath("(//*[@class='radioSimpleInput'])[{}]".format(id))
     elem.click()
@@ -174,6 +171,7 @@ def main():
     parser.add_argument('-Np', '--NParaIterations', help='The number of iterations in parallel aka the number of browsers in parallel.', type=int)
     parser.add_argument('-c', '--chrome', help="Launch the script with the chrome browser", action="store_true")
     parser.add_argument('-f', '--firefox', help="Launch the script with the firefox browser", action="store_true")
+    parser.add_argument('-o', '--opera', help="Launch the script with the opera browser", action="store_true")
     args = parser.parse_args()
 
     N = args.Niterations if args.Niterations is not None else 1
@@ -181,6 +179,8 @@ def main():
 
     if args.chrome:
         driver_web = webdriver.Chrome
+    elif args.opera:
+        driver_web = webdriver.Opera
     elif args.firefox:
         driver_web = webdriver.Firefox
     else:
