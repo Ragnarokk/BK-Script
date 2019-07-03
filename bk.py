@@ -32,7 +32,8 @@ def next_page(browser: webdriver):
 
 def completion_process(n: int, quit: bool):
 
-    browser = webdriver.Firefox()
+    #browser = webdriver.Firefox()
+    browser = webdriver.Chrome()
     
     for _ in range(n):
         browser.get("https://www.bk-feedback-uk.com")
@@ -109,7 +110,9 @@ def completion_process(n: int, quit: bool):
     
         next_page(browser)
     
-        select_checkbox(browser, 18)
+        #select_checkbox(browser, 18)
+        elem = browser.find_element_by_id("FNSR000090").find_element_by_class_name("checkboxSimpleInput")
+        elem.click()
         next_page(browser)
     
         select_checkbox(browser, 11)
