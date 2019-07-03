@@ -156,24 +156,28 @@ def completion_process(n: int, quit: bool):
         elem = browser.find_element_by_class_name('ValCode')
         print(elem.text)
 
-    if args.quit:
+    if quit:
         browser.quit()
 
-# Gestion et parsing des arguments
-parser = argparse.ArgumentParser()
-parser.add_argument('-q', '--quit', help='Quit when the program is finished.', action="store_true")
-parser.add_argument('-N', '--Niterations', help='The number of iterations of the script in one browser.', type=int)
-parser.add_argument('-Np', '--NParaIterations', help='The number of iterations in parallel aka the number of browsers in parallel.', type=int)
-args = parser.parse_args()
+def main():
+    # Gestion et parsing des arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-q', '--quit', help='Quit when the program is finished.', action="store_true")
+    parser.add_argument('-N', '--Niterations', help='The number of iterations of the script in one browser.', type=int)
+    parser.add_argument('-Np', '--NParaIterations', help='The number of iterations in parallel aka the number of browsers in parallel.', type=int)
+    args = parser.parse_args()
 
-N = args.Niterations if args.Niterations is not None else 1
-Np = args.NParaIterations if args.NParaIterations is not None else 1
+    N = args.Niterations if args.Niterations is not None else 1
+    Np = args.NParaIterations if args.NParaIterations is not None else 1
 
-threads = []
-for i in range(Np):
-    thread = threading.Thread(target=completion_process, args=(N, args.quit))
-    threads.append(thread)
-    thread.start()
+    threads = []
+    for i in range(Np):
+        thread = threading.Thread(target=completion_process, args=(N, args.quit))
+        threads.append(thread)
+        thread.start()
 
-for j in range(Np):
-    threads[j].join()
+    for j in range(Np):
+        threads[j].join()
+
+if __name__ == "__main__":
+    main()
