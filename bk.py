@@ -10,6 +10,7 @@ from selenium.common.exceptions import NoSuchElementException
 import datetime
 import argparse
 import threading
+import os
 
 def select_radio(browser: webdriver, id: int):
     elem = browser.find_element_by_xpath("(//*[@class='radioSimpleInput'])[{}]".format(id))
@@ -160,6 +161,10 @@ def completion_process(n: int, quit: bool):
         browser.quit()
 
 def main():
+    # We add the browser drivers to the PATH
+    drivers_path = os.path.join(os.getcwd(), "drivers")
+    os.environ["PATH"] += os.pathsep + drivers_path
+
     # Gestion et parsing des arguments
     parser = argparse.ArgumentParser()
     parser.add_argument('-q', '--quit', help='Quit when the program is finished.', action="store_true")
