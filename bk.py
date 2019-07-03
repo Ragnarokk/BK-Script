@@ -12,6 +12,9 @@ import argparse
 import threading
 import os
 
+drivers = {('f', "firefox"): webdriver.Firefox,
+           ('c', "chrome"): webdriver.Chrome}
+
 def select_radio(browser: webdriver, id: int):
     elem = browser.find_element_by_xpath("(//*[@class='radioSimpleInput'])[{}]".format(id))
     elem.click()
@@ -31,10 +34,9 @@ def next_page(browser: webdriver):
     elem = browser.find_element_by_id('NextButton')  # Find the button
     elem.click()
 
-def completion_process(n: int, quit: bool):
+def completion_process(n: int, quit: bool, driver_web: webdriver):
 
-    #browser = webdriver.Firefox()
-    browser = webdriver.Chrome()
+    browser = driver_web()
     
     for _ in range(n):
         browser.get("https://www.bk-feedback-uk.com")
@@ -170,14 +172,23 @@ def main():
     parser.add_argument('-q', '--quit', help='Quit when the program is finished.', action="store_true")
     parser.add_argument('-N', '--Niterations', help='The number of iterations of the script in one browser.', type=int)
     parser.add_argument('-Np', '--NParaIterations', help='The number of iterations in parallel aka the number of browsers in parallel.', type=int)
+    parser.add_argument('-c', '--chrome', help="Launch the script with the chrome browser", action="store_true")
+    parser.add_argument('-f', '--firefox', help="Launch the script with the firefox browser", action="store_true")
     args = parser.parse_args()
 
     N = args.Niterations if args.Niterations is not None else 1
     Np = args.NParaIterations if args.NParaIterations is not None else 1
 
+    if args.chrome:
+        driver_web = webdriver.Chrome
+    elif args.firefox:
+        driver_web = webdriver.Firefox
+    else:
+        driver_web = webdriver.Firefox 
+    
     threads = []
-    for i in range(Np):
-        thread = threading.Thread(target=completion_process, args=(N, args.quit))
+    for _ in range(Np):
+        thread = threading.Thread(target=completion_process, args=(N, args.quit, driver_web))
         threads.append(thread)
         thread.start()
 
