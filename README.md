@@ -19,15 +19,6 @@ Installer selenium
 ```
 sudo python3 -m pip install -U selenium
 ```
-
-Télécharger geckodriver et le mettre dans le dossier contenant l'éxecutable python
-
-```
-wget https://github.com/mozilla/geckodriver/releases/download/v0.24.0/geckodriver-v0.24.0-linux64.tar.gz
-tar xvf geckodriver-v0.24.0-linux64.tar.gz
-sudo cp geckodriver /usr/bin 
-```
-
 ### Windows
 Télécharger et installer python3 si ce n'ets pas deja fait depuis ici :
 https://www.python.org/downloads/release/python-373/
@@ -36,10 +27,6 @@ Installer selenium
 ```
 python3 -m pip install -U selenium
 ```
-
-Télécharger geckodriver ici : https://github.com/mozilla/geckodriver/releases
-et le mettre dans le dossier où se trouve python3.exe
-
 ## Lancement
 ```
 python3 bk.py
@@ -62,3 +49,9 @@ optional arguments:
  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The number of iterations of the script in one browser.  
  &nbsp;&nbsp; -Np NPARAITERATIONS, --NParaIterations NPARAITERATIONS  
  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The number of iterations in parallel aka the number of browsers in parallel.  
+  &nbsp;&nbsp;-c, --chrome          
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Launch the script with the chrome browser
+  &nbsp;&nbsp;-f, --firefox         
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Launch the script with the firefox browser
+  &nbsp;&nbsp;-o, --opera           
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Launch the script with the opera browser
