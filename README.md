@@ -19,6 +19,10 @@ Installer selenium
 ```
 sudo python3 -m pip install -U selenium
 ```
+ou pour python2 :
+```
+sudo python -m pip install -U selenium
+```
 ### Windows
 Télécharger et installer python3 si ce n'ets pas deja fait depuis ici :
 https://www.python.org/downloads/release/python-373/
@@ -27,15 +31,23 @@ Installer selenium
 ```
 python3 -m pip install -U selenium
 ```
+ou pour python2
+```
+python -m pip install -U selenium
+```
 ## Lancement
 ```
 python3 bk.py
+  ou
+python bk_2.py
 ```
 
 ou tout simplement
 
 ```
 ./bk.py
+  ou
+./bk_2.py
 ```
 ## Utilisation
 usage: bk.py [-h] [-q] [-N NITERATIONS] [-Np NPARAITERATIONS]
