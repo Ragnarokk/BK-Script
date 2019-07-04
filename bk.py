@@ -134,8 +134,11 @@ def completion_process(n: int, quit: bool, driver_web: webdriver):
         select_radio(browser, 1)
         next_page(browser)
     
-        select_radio(browser, 1)
-        next_page(browser)
+        try:
+            select_radio(browser, 1)
+            next_page(browser)
+        except NoSuchElementException:
+            pass
     
         select = Select(browser.find_element_by_id("R069000"))
         select.select_by_value('9')
@@ -153,8 +156,11 @@ def completion_process(n: int, quit: bool, driver_web: webdriver):
         elem.send_keys('69000')
         next_page(browser)
     
-        elem = browser.find_element_by_class_name('ValCode')
-        print(elem.text)
+        try: 
+            elem = browser.find_element_by_class_name('ValCode')
+            print(elem.text)
+        except NoSuchElementException:
+            print("\u001b[31mValidation Code FAILED\u001b[0m")
 
     if quit:
         browser.quit()
