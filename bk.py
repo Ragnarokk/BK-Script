@@ -175,10 +175,14 @@ def main():
     parser.add_argument('-q', '--quit', help='Quit when the program is finished.', action="store_true")
     parser.add_argument('-N', '--Niterations', help='The number of iterations of the script in one browser.', type=int)
     parser.add_argument('-Np', '--NParaIterations', help='The number of iterations in parallel aka the number of browsers in parallel.', type=int)
+    parser.add_argument('-Nc', '--NCodes', help='The number of unqiue codes that the user wants at the end. Relaunches the script until this number is reached. This option is incompatible with -N and -Np', type=int)
     parser.add_argument('-c', '--chrome', help="Launch the script with the chrome browser", action="store_true")
     parser.add_argument('-f', '--firefox', help="Launch the script with the firefox browser", action="store_true")
     parser.add_argument('-o', '--opera', help="Launch the script with the opera browser", action="store_true")
     args = parser.parse_args()
+
+    if args.NCodes is not None and ((args.Niterations is not None) or (args.NParaIterations is not None)):
+        print("The Nc option is incompatible with N or Np")
 
     N = args.Niterations if args.Niterations is not None else 1
     Np = args.NParaIterations if args.NParaIterations is not None else 1
