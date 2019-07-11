@@ -13,6 +13,7 @@ import threading
 import os
 
 from typing import List
+from typing import Union
 
 def select_radio(browser: webdriver, id: int):
     elem = browser.find_element_by_xpath("(//*[@class='radioSimpleInput'])[{}]".format(id))
@@ -33,7 +34,7 @@ def next_page(browser: webdriver):
     elem = browser.find_element_by_id('NextButton')  # Find the button
     elem.click()
 
-def completion_process(n: int, quit: bool, driver_web: webdriver, codes: List[str]):
+def completion_process(n: int, quit: bool, driver_web: webdriver) -> Union[str, None]:
 
     browser = driver_web()
     
@@ -160,13 +161,29 @@ def completion_process(n: int, quit: bool, driver_web: webdriver, codes: List[st
     
         try: 
             elem = browser.find_element_by_class_name('ValCode')
-            codes.append(elem.text)
+            return elem.text
             #print(elem.text)
         except NoSuchElementException:
             print("\u001b[31mValidation Code FAILED\u001b[0m")
+            return None
 
     if quit:
         browser.quit()
+
+
+def completion_normal(n: int, quit: bool, driver_web: webdriver, codes: List[str]):
+    result = completion_process(n, quit, driver_web)
+    if result is not None:
+        codes.append(result)
+
+
+def completion_assured(n: int, quit: bool, driver_web: webdriver, codes: List[str]):
+    result = completion_process(n, quit, driver_web)
+    while (result is None) or result in codes:
+        result = completion_process(n, quit, driver_web)
+    
+    codes.append(result)
+
 
 def main():
     # We add the browser drivers to the PATH
@@ -203,7 +220,10 @@ def main():
     threads = []
     codes = []
     for _ in range(Np):
-        thread = threading.Thread(target=completion_process, args=(N, args.quit, driver_web, codes))
+        if args.NCodes is not None:
+            thread = threading.Thread(target=completion_assured, args=(N, args.quit, driver_web, codes))
+        else:
+            thread = threading.Thread(target=completion_normal, args=(N, args.quit, driver_web, codes))
         threads.append(thread)
         thread.start()
 
