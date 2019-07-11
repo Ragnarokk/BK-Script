@@ -12,6 +12,8 @@ import argparse
 import threading
 import os
 
+from typing import List
+
 def select_radio(browser: webdriver, id: int):
     elem = browser.find_element_by_xpath("(//*[@class='radioSimpleInput'])[{}]".format(id))
     elem.click()
@@ -31,7 +33,7 @@ def next_page(browser: webdriver):
     elem = browser.find_element_by_id('NextButton')  # Find the button
     elem.click()
 
-def completion_process(n: int, quit: bool, driver_web: webdriver):
+def completion_process(n: int, quit: bool, driver_web: webdriver, codes: List[str]):
 
     browser = driver_web()
     
@@ -158,7 +160,8 @@ def completion_process(n: int, quit: bool, driver_web: webdriver):
     
         try: 
             elem = browser.find_element_by_class_name('ValCode')
-            print(elem.text)
+            codes.append(elem.text)
+            #print(elem.text)
         except NoSuchElementException:
             print("\u001b[31mValidation Code FAILED\u001b[0m")
 
@@ -183,9 +186,10 @@ def main():
 
     if args.NCodes is not None and ((args.Niterations is not None) or (args.NParaIterations is not None)):
         print("The Nc option is incompatible with N or Np")
+        exit()
 
     N = args.Niterations if args.Niterations is not None else 1
-    Np = args.NParaIterations if args.NParaIterations is not None else 1
+    Np = args.NParaIterations if args.NParaIterations is not None else (args.NCodes if args.NCodes is not None else 1)
 
     if args.chrome:
         driver_web = webdriver.Chrome
@@ -197,13 +201,17 @@ def main():
         driver_web = webdriver.Firefox 
     
     threads = []
+    codes = []
     for _ in range(Np):
-        thread = threading.Thread(target=completion_process, args=(N, args.quit, driver_web))
+        thread = threading.Thread(target=completion_process, args=(N, args.quit, driver_web, codes))
         threads.append(thread)
         thread.start()
 
     for j in range(Np):
         threads[j].join()
+
+    for c in codes:
+        print(c)
 
 if __name__ == "__main__":
     main()
