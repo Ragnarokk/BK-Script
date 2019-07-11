@@ -12,6 +12,9 @@ import argparse
 import threading
 import os
 
+from typing import List
+from typing import Union
+
 def select_radio(browser: webdriver, id: int):
     elem = browser.find_element_by_xpath("(//*[@class='radioSimpleInput'])[{}]".format(id))
     elem.click()
@@ -31,7 +34,7 @@ def next_page(browser: webdriver):
     elem = browser.find_element_by_id('NextButton')  # Find the button
     elem.click()
 
-def completion_process(n: int, quit: bool, driver_web: webdriver):
+def completion_process(n: int, quit: bool, driver_web: webdriver) -> Union[str, None]:
 
     browser = driver_web()
     
@@ -158,12 +161,29 @@ def completion_process(n: int, quit: bool, driver_web: webdriver):
     
         try: 
             elem = browser.find_element_by_class_name('ValCode')
-            print(elem.text)
+            return elem.text
+            #print(elem.text)
         except NoSuchElementException:
             print("\u001b[31mValidation Code FAILED\u001b[0m")
+            return None
 
     if quit:
         browser.quit()
+
+
+def completion_normal(n: int, quit: bool, driver_web: webdriver, codes: List[str]):
+    result = completion_process(n, quit, driver_web)
+    if result is not None:
+        codes.append(result)
+
+
+def completion_assured(n: int, quit: bool, driver_web: webdriver, codes: List[str]):
+    result = completion_process(n, quit, driver_web)
+    while (result is None) or result in codes:
+        result = completion_process(n, quit, driver_web)
+    
+    codes.append(result)
+
 
 def main():
     # We add the browser drivers to the PATH
@@ -175,13 +195,18 @@ def main():
     parser.add_argument('-q', '--quit', help='Quit when the program is finished.', action="store_true")
     parser.add_argument('-N', '--Niterations', help='The number of iterations of the script in one browser.', type=int)
     parser.add_argument('-Np', '--NParaIterations', help='The number of iterations in parallel aka the number of browsers in parallel.', type=int)
+    parser.add_argument('-Nc', '--NCodes', help='The number of unqiue codes that the user wants at the end. Relaunches the script until this number is reached. This option is incompatible with -N and -Np', type=int)
     parser.add_argument('-c', '--chrome', help="Launch the script with the chrome browser", action="store_true")
     parser.add_argument('-f', '--firefox', help="Launch the script with the firefox browser", action="store_true")
     parser.add_argument('-o', '--opera', help="Launch the script with the opera browser", action="store_true")
     args = parser.parse_args()
 
+    if args.NCodes is not None and ((args.Niterations is not None) or (args.NParaIterations is not None)):
+        print("The Nc option is incompatible with N or Np")
+        exit()
+
     N = args.Niterations if args.Niterations is not None else 1
-    Np = args.NParaIterations if args.NParaIterations is not None else 1
+    Np = args.NParaIterations if args.NParaIterations is not None else (args.NCodes if args.NCodes is not None else 1)
 
     if args.chrome:
         driver_web = webdriver.Chrome
@@ -193,13 +218,20 @@ def main():
         driver_web = webdriver.Firefox 
     
     threads = []
+    codes = []
     for _ in range(Np):
-        thread = threading.Thread(target=completion_process, args=(N, args.quit, driver_web))
+        if args.NCodes is not None:
+            thread = threading.Thread(target=completion_assured, args=(N, args.quit, driver_web, codes))
+        else:
+            thread = threading.Thread(target=completion_normal, args=(N, args.quit, driver_web, codes))
         threads.append(thread)
         thread.start()
 
     for j in range(Np):
         threads[j].join()
+
+    for c in codes:
+        print(c)
 
 if __name__ == "__main__":
     main()
