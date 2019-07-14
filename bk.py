@@ -11,6 +11,7 @@ import datetime
 import argparse
 import threading
 import os
+import platform
 
 from typing import List
 from typing import Union
@@ -187,7 +188,15 @@ def completion_assured(n: int, quit: bool, driver_web: webdriver, codes: List[st
 
 def main():
     # We add the browser drivers to the PATH
-    drivers_path = os.path.join(os.getcwd(), "drivers")
+    system = platform.system()
+    if system == "Windows":
+        subdir = "win64"
+    elif system == "Linux":
+        subdir = "lnx64"
+    else:
+        print("The system ", system, "is not supported")
+
+    drivers_path = os.path.join(os.getcwd(), "drivers", subdir)
     os.environ["PATH"] += os.pathsep + drivers_path
 
     # Gestion et parsing des arguments
@@ -235,3 +244,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+    if platform.system() == "Windows":
+       os.system("pause")
