@@ -11,6 +11,7 @@ import datetime
 import argparse
 import threading
 import os
+import platform
 
 def select_radio(browser, id):
     elem = browser.find_element_by_xpath("(//*[@class='radioSimpleInput'])[{}]".format(id))
@@ -134,8 +135,11 @@ def completion_process(n, quit, driver_web):
         select_radio(browser, 1)
         next_page(browser)
     
-        select_radio(browser, 1)
-        next_page(browser)
+        try:
+            select_radio(browser, 1)
+            next_page(browser)
+        except NoSuchElementException:
+            pass
     
         select = Select(browser.find_element_by_id("R069000"))
         select.select_by_value('9')
@@ -153,15 +157,43 @@ def completion_process(n, quit, driver_web):
         elem.send_keys('69000')
         next_page(browser)
     
-        elem = browser.find_element_by_class_name('ValCode')
-        print elem.text
+        try: 
+            elem = browser.find_element_by_class_name('ValCode')
+            return elem.text
+            #print(elem.text)
+        except NoSuchElementException:
+            print "\u001b[31mValidation Code FAILED\u001b[0m"
+            return None
 
     if quit:
         browser.quit()
 
+
+def completion_normal(n, quit, driver_web, codes):
+    result = completion_process(n, quit, driver_web)
+    if result is not None:
+        codes.append(result)
+
+
+def completion_assured(n, quit, driver_web, codes):
+    result = completion_process(n, quit, driver_web)
+    while (result is None) or result in codes:
+        result = completion_process(n, quit, driver_web)
+    
+    codes.append(result)
+
+
 def main():
     # We add the browser drivers to the PATH
-    drivers_path = os.path.join(os.getcwd(), "drivers")
+    system = platform.system()
+    if system == "Windows":
+        subdir = "win64"
+    elif system == "Linux":
+        subdir = "lnx64"
+    else:
+        print "The system ", system, "is not supported"
+
+    drivers_path = os.path.join(os.getcwd(), "drivers", subdir)
     os.environ["PATH"] += os.pathsep + drivers_path
 
     # Gestion et parsing des arguments
@@ -169,13 +201,18 @@ def main():
     parser.add_argument('-q', '--quit', help='Quit when the program is finished.', action="store_true")
     parser.add_argument('-N', '--Niterations', help='The number of iterations of the script in one browser.', type=int)
     parser.add_argument('-Np', '--NParaIterations', help='The number of iterations in parallel aka the number of browsers in parallel.', type=int)
+    parser.add_argument('-Nc', '--NCodes', help='The number of unqiue codes that the user wants at the end. Relaunches the script until this number is reached. This option is incompatible with -N and -Np', type=int)
     parser.add_argument('-c', '--chrome', help="Launch the script with the chrome browser", action="store_true")
     parser.add_argument('-f', '--firefox', help="Launch the script with the firefox browser", action="store_true")
     parser.add_argument('-o', '--opera', help="Launch the script with the opera browser", action="store_true")
     args = parser.parse_args()
 
+    if args.NCodes is not None and ((args.Niterations is not None) or (args.NParaIterations is not None)):
+        print "The Nc option is incompatible with N or Np"
+        exit()
+
     N = args.Niterations if args.Niterations is not None else 1
-    Np = args.NParaIterations if args.NParaIterations is not None else 1
+    Np = args.NParaIterations if args.NParaIterations is not None else (args.NCodes if args.NCodes is not None else 1)
 
     if args.chrome:
         driver_web = webdriver.Chrome
@@ -187,13 +224,22 @@ def main():
         driver_web = webdriver.Firefox 
     
     threads = []
+    codes = []
     for _ in range(Np):
-        thread = threading.Thread(target=completion_process, args=(N, args.quit, driver_web))
+        if args.NCodes is not None:
+            thread = threading.Thread(target=completion_assured, args=(N, args.quit, driver_web, codes))
+        else:
+            thread = threading.Thread(target=completion_normal, args=(N, args.quit, driver_web, codes))
         threads.append(thread)
         thread.start()
 
     for j in range(Np):
         threads[j].join()
 
+    for c in codes:
+        print(c)
+
 if __name__ == "__main__":
     main()
+    if platform.system() == "Windows":
+       os.system("pause")
