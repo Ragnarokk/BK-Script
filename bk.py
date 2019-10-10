@@ -224,7 +224,7 @@ def main():
     elif args.firefox:
         driver_web = webdriver.Firefox
     else:
-        driver_web = webdriver.Firefox 
+        driver_web = webdriver.Chrome 
     
     threads = []
     codes = []
