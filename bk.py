@@ -35,7 +35,7 @@ def next_page(browser: webdriver):
     elem = browser.find_element_by_id('NextButton')  # Find the button
     elem.click()
 
-def completion_process(n: int, quit: bool, driver_web: webdriver) -> Union[str, None]:
+def gen_completion_process(n: int, quit: bool, driver_web: webdriver) -> Iterable[Union[str, None]]:
 
     browser = driver_web()
     
@@ -162,28 +162,32 @@ def completion_process(n: int, quit: bool, driver_web: webdriver) -> Union[str, 
     
         try: 
             elem = browser.find_element_by_class_name('ValCode')
-            return elem.text
+            yield elem.text
             #print(elem.text)
         except NoSuchElementException:
             print("\u001b[31mValidation Code FAILED\u001b[0m")
-            return None
+            yield None
 
     if quit:
         browser.quit()
 
 
 def completion_normal(n: int, quit: bool, driver_web: webdriver, codes: List[str]):
-    result = completion_process(n, quit, driver_web)
-    if result is not None:
-        codes.append(result)
+    for result in gen_completion_process(n, quit, driver_web):
+        if result is not None:
+            codes.append(result)
 
 
 def completion_assured(n: int, quit: bool, driver_web: webdriver, codes: List[str]):
-    result = completion_process(n, quit, driver_web)
-    while (result is None) or result in codes:
-        result = completion_process(n, quit, driver_web)
-    
-    codes.append(result)
+    failed = 0
+    while failed > 0:
+        failed = 0
+        for result in gen_completion_process(n, quit, driver_web):
+            if (result is None) or result in codes:
+                failed += 1
+            else:
+                codes.append(result)
+        n = failed
 
 
 def main():
