@@ -188,13 +188,13 @@ def completion_assured(n: int, quit: bool, driver_web: webdriver, codes: List[st
 
 def main():
     # We add the browser drivers to the PATH
-    system = platform.system()
-    if system == "Windows":
+    system_platform = platform.system()
+    if system_platform == "Windows":
         subdir = "win64"
-    elif system == "Linux":
+    elif system_platform == "Linux":
         subdir = "lnx64"
     else:
-        print("The system ", system, "is not supported")
+        print("The system ", system_platform, "is not supported")
 
     drivers_path = os.path.join(os.getcwd(), "drivers", subdir)
     os.environ["PATH"] += os.pathsep + drivers_path
@@ -231,7 +231,10 @@ def main():
     elif args.firefox:
         driver_web = webdriver.Firefox
     else:
-        driver_web = webdriver.Chrome 
+        if system_platform == "Windows":
+            driver_web = webdriver.Chrome 
+        else:
+            driver_web = webdriver.Firefox
     
     threads = []
     codes = []
