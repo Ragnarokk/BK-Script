@@ -15,6 +15,7 @@ import platform
 
 from typing import List
 from typing import Union
+from typing import Iterable
 
 def select_radio(browser: webdriver, id: int):
     elem = browser.find_element_by_xpath("(//*[@class='radioSimpleInput'])[{}]".format(id))
@@ -179,7 +180,7 @@ def completion_normal(n: int, quit: bool, driver_web: webdriver, codes: List[str
 
 
 def completion_assured(n: int, quit: bool, driver_web: webdriver, codes: List[str]):
-    failed = 0
+    failed = 1
     while failed > 0:
         failed = 0
         for result in gen_completion_process(n, quit, driver_web):
